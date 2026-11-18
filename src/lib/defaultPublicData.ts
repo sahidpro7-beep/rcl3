@@ -1,0 +1,107 @@
+import {
+  DEFAULT_CHAMPION_2025_LOGO,
+  DEFAULT_CHAMPION_2026_LOGO,
+  DEFAULT_FACEBOOK_PAGE_URL,
+  DEFAULT_HERO_IMAGE,
+  DEFAULT_INSTAGRAM_URL,
+  DEFAULT_OFFICIAL_LOGO,
+  DEFAULT_WHATSAPP_CHANNEL_URL,
+  INITIAL_OPENING_DATE_IST,
+  OFFICIAL_CONTACT_PHONE,
+  OFFICIAL_RECEIVER_NAME,
+  OFFICIAL_UPI_ID,
+  OFFICIAL_WHATSAPP_DIGITS,
+  evaluateRegistrationWindow,
+} from './validation';
+import type { PublicBootstrapData } from '../types/rcl';
+
+export function getInitialPublicData(): PublicBootstrapData {
+  const openAt = INITIAL_OPENING_DATE_IST;
+  return {
+    settings: {
+      tournament_name: 'Raghunathpur Cricket League',
+      short_name: 'RCL 2027',
+      season: 3,
+      tagline_en: '6 TEAMS. ONE TROPHY. ONE CHAMPION!',
+      tagline_bn: '৬ দল। এক ট্রফি। এক চ্যাম্পিয়ন!',
+      contact_name: OFFICIAL_RECEIVER_NAME,
+      contact_phone: OFFICIAL_CONTACT_PHONE,
+      whatsapp_number: OFFICIAL_WHATSAPP_DIGITS,
+      upi_id: OFFICIAL_UPI_ID,
+      upi_receiver_name: OFFICIAL_RECEIVER_NAME,
+      cash_instructions_en: `For cash payment, contact ${OFFICIAL_RECEIVER_NAME}: ${OFFICIAL_CONTACT_PHONE}.`,
+      cash_instructions_bn: `নগদ অর্থ প্রদানের জন্য সামির খানের সাথে যোগাযোগ করুন: ${OFFICIAL_CONTACT_PHONE}।`,
+      registration_mode: 'auto',
+      registration_open_at: openAt,
+      registration_close_at: null,
+      is_registration_open: evaluateRegistrationWindow({
+        registration_mode: 'auto',
+        registration_open_at: openAt,
+        registration_close_at: null,
+      }),
+      whatsapp_channel_url: DEFAULT_WHATSAPP_CHANNEL_URL,
+      facebook_url: DEFAULT_FACEBOOK_PAGE_URL,
+      instagram_url: DEFAULT_INSTAGRAM_URL,
+      logo_url: DEFAULT_OFFICIAL_LOGO,
+      hero_image_url: DEFAULT_HERO_IMAGE,
+      about_en: '',
+      about_bn: '',
+      rules_en:
+        '1. Players must submit accurate name, role, one-line address, 10-digit Indian mobile number, and clear photograph.\n2. The selected Base Price (₹20 or ₹30) is the full registration payment amount. There is no ₹500 fee or extra charge.\n3. UPI payments require a valid payment screenshot upload; cash payments remain pending until verified by the organizer.\n4. Only applications with verified payment and admin approval appear in the public RCL 2027 Player List.\n5. Approved players’ names, photos, roles, and Base Prices will be displayed publicly on the tournament portal.',
+      rules_bn:
+        '১. খেলোয়াড়দের সঠিক নাম, ভূমিকা, এক লাইনের ঠিকানা, ১০-অঙ্কের ভারতীয় মোবাইল নম্বর এবং স্পষ্ট ছবি জমা দিতে হবে।\n২. নির্বাচিত বেস প্রাইস (₹২০ বা ₹৩০)-ই সম্পূর্ণ নিবন্ধন ফি। কোনো অতিরিক্ত ৫০০ টাকা ফি নেই।\n৩. UPI পেমেন্টের ক্ষেত্রে পেমেন্ট স্ক্রিনশট আপলোড করা বাধ্যতামূলক; নগদ পেমেন্ট অ্যাডমিন যাচাই না করা পর্যন্ত পেন্ডিং থাকবে।\n৪. কেবল পেমেন্ট যাচাই ও অ্যাডমিন অনুমোদনের পরই খেলোয়াড়দের নাম পাবলিক প্লেয়ার লিস্টে প্রকাশিত হবে।\n৫. অনুমোদিত খেলোয়াড়দের নাম, ছবি, ভূমিকা এবং বেস প্রাইস ওয়েবসাইটে সবার জন্য প্রদর্শিত হবে।',
+    },
+    pastChampions: [
+      {
+        id: 'champion-2025',
+        slot_order: 1,
+        champion_year: 2025,
+        team_name_en: 'Ali Knight Rider',
+        team_name_bn: 'আলি নাইট রাইডার',
+        logo_path: DEFAULT_CHAMPION_2025_LOGO,
+        logo_url: DEFAULT_CHAMPION_2025_LOGO,
+      },
+      {
+        id: 'champion-2026',
+        slot_order: 2,
+        champion_year: 2026,
+        team_name_en: 'SRCB',
+        team_name_bn: 'এস.আরসিবি (SRCB)',
+        logo_path: DEFAULT_CHAMPION_2026_LOGO,
+        logo_url: DEFAULT_CHAMPION_2026_LOGO,
+      },
+    ],
+    notices: [],
+    videos: [
+      {
+        id: 'video-fb-1',
+        provider: 'facebook',
+        source_url: 'https://www.facebook.com/reel/1118360820808949/',
+        caption_en: 'RCL Tournament Reel',
+        caption_bn: 'আরসিএল টুর্নামেন্ট রিল',
+        sort_order: 1,
+        created_at: openAt,
+      },
+      {
+        id: 'video-yt-1',
+        provider: 'youtube',
+        source_url: 'https://www.youtube.com/watch?v=7XJIGX0qSnI',
+        caption_en: 'RCL Match Highlight 1',
+        caption_bn: 'আরসিএল ম্যাচ হাইলাইটস ১',
+        sort_order: 2,
+        created_at: openAt,
+      },
+      {
+        id: 'video-yt-2',
+        provider: 'youtube',
+        source_url: 'https://www.youtube.com/watch?v=_bebjalkgvM',
+        caption_en: 'RCL Match Highlight 2',
+        caption_bn: 'আরসিএল ম্যাচ হাইলাইটস ২',
+        sort_order: 3,
+        created_at: openAt,
+      },
+    ],
+    sponsors: [],
+    approvedPlayers: [],
+  };
+}
