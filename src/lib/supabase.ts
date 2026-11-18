@@ -1,6 +1,30 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = (import.meta.env?.VITE_SUPABASE_URL as string | undefined)?.trim() ?? '';
+export function normalizeSupabaseUrl(rawUrl: string): string {
+  const trimmed = rawUrl.trim();
+  if (!trimmed) return '';
+
+  // Bare Supabase project ref (e.g. "psykpephkbdwkdeenrvj")
+  if (/^[a-z0-9]{15,30}$/i.test(trimmed)) {
+    return `https://${trimmed}.supabase.co`;
+  }
+
+  // Supabase Dashboard URL (e.g. "https://supabase.com/dashboard/project/<ref>")
+  const dashboardMatch = trimmed.match(/supabase\.com\/dashboard\/project\/([a-z0-9]+)/i);
+  if (dashboardMatch?.[1]) {
+    return `https://${dashboardMatch[1]}.supabase.co`;
+  }
+
+  let normalized = trimmed;
+  if (!/^https?:\/\//i.test(normalized)) {
+    normalized = `https://${normalized}`;
+  }
+
+  normalized = normalized.replace(/\/functions\/v1\/?$/i, '').replace(/\/+$/, '');
+  return normalized;
+}
+
+const supabaseUrl = normalizeSupabaseUrl((import.meta.env?.VITE_SUPABASE_URL as string | undefined) ?? '');
 const supabaseAnonKey = (import.meta.env?.VITE_SUPABASE_ANON_KEY as string | undefined)?.trim() ?? '';
 
 export const isSupabaseConfigured =
@@ -22,7 +46,7 @@ export function getEdgeFunctionUrl(functionName: string): string {
   if (!supabaseUrl) {
     throw new Error('Supabase URL is not configured.');
   }
-  return `${supabaseUrl.replace(/\/$/, '')}/functions/v1/${functionName}`;
+  return `${supabaseUrl}/functions/v1/${functionName}`;
 }
 
 /**
@@ -74,7 +98,8 @@ export async function callEdgeFunction<T>(
     requestBody = JSON.stringify(options.body);
   }
 
-  const res = await fetch(getEdgeFunctionUrl(functionName), {
+  const targetUrl = getEdgeFunctionUrl(functionName);
+  const res = await fetch(targetUrl, {
     method: options.method ?? 'POST',
     headers,
     body: requestBody,
@@ -83,8 +108,14 @@ export async function callEdgeFunction<T>(
   const payload = await res.json().catch(() => ({}));
   if (!res.ok) {
     if (res.status === 404 || payload?.code === 'NOT_FOUND') {
+      let hostLabel = supabaseUrl;
+      try {
+        hostLabel = new URL(supabaseUrl).host;
+      } catch {
+        // Keep raw label if URL parsing fails
+      }
       throw new Error(
-        `Supabase Edge Function "${functionName}" is not deployed yet on your project. Run the SQL migrations (001–005) and deploy the 6 Edge Functions in supabase/functions/.`,
+        `Supabase Edge Function "${functionName}" was not found on "${hostLabel}". Verify VITE_SUPABASE_URL points to your Supabase Project URL (https://<project-ref>.supabase.co) and that all 6 Edge Functions in supabase/functions/ are deployed.`,
       );
     }
     throw new Error(typeof payload.error === 'string' ? payload.error : `Request failed (${res.status})`);

@@ -31,7 +31,7 @@ import {
   getApplicationStatusTextClass,
   getPaymentStatusTextClass,
 } from '../src/lib/i18n';
-import { buildEdgeFunctionHeaders } from '../src/lib/supabase';
+import { buildEdgeFunctionHeaders, normalizeSupabaseUrl } from '../src/lib/supabase';
 
 describe('RCL 2027 Payment & UPI Rules', () => {
   it('uses the overridden official UPI ID 9732865882@ybl and separate WhatsApp/contact +91 8509044325', () => {
@@ -361,6 +361,17 @@ describe('RCL 2027 Routing, Past Champions, Video Carousel & Official Social Lin
     expect(getApplicationStatusTextClass('rejected')).toBe('text-red-600');
     expect(getPaymentStatusTextClass('pending_verification')).toBe('text-orange-600');
     expect(getPaymentStatusTextClass('verified')).toBe('text-green-600');
+  });
+
+  it('normalizes bare project refs, dashboard URLs, and missing protocols in VITE_SUPABASE_URL', () => {
+    expect(normalizeSupabaseUrl('psykpephkbdwkdeenrvj')).toBe('https://psykpephkbdwkdeenrvj.supabase.co');
+    expect(normalizeSupabaseUrl('https://supabase.com/dashboard/project/psykpephkbdwkdeenrvj')).toBe(
+      'https://psykpephkbdwkdeenrvj.supabase.co',
+    );
+    expect(normalizeSupabaseUrl('psykpephkbdwkdeenrvj.supabase.co/')).toBe('https://psykpephkbdwkdeenrvj.supabase.co');
+    expect(normalizeSupabaseUrl('https://psykpephkbdwkdeenrvj.supabase.co/functions/v1/')).toBe(
+      'https://psykpephkbdwkdeenrvj.supabase.co',
+    );
   });
 });
 
